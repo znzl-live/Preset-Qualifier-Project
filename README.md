@@ -2,28 +2,6 @@
 
 A modular Python application for processing, analyzing, and qualifying VST presets using audio feature extraction and machine learning techniques.
 
-## 🏗️ Clean Architecture
-
-This project has been restructured with a clean, modular architecture that separates concerns and improves maintainability:
-
-```
-preset-qualifier-project/
-├── src/                    # Source code (Python package)
-│   ├── config/            # Configuration management
-│   ├── data_processing/   # Data cleaning and preparation
-│   ├── audio_analysis/    # Audio feature extraction
-│   ├── qualification/     # Preset scoring and sorting
-│   └── utils/             # Shared utilities (logging, etc.)
-├── data/                  # Input data and generated files
-├── output/                # Final qualified presets (organized by score)
-├── config/                # Configuration files (YAML)
-├── scripts/               # Executable scripts
-├── docs/                  # Documentation
-├── tests/                 # Unit tests
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
-```
-
 ## 🚀 Quick Start
 
 ### Prerequisites
