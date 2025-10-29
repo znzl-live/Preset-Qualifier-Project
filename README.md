@@ -1,119 +1,196 @@
-# Preset-Qualifier-Project
+# Preset Qualifier Project
 
-This project is made to generate and qualify based on defined criteria.
+A modular Python application for processing, analyzing, and qualifying VST presets using audio feature extraction and machine learning techniques.
 
-***
+## 🏗️ Clean Architecture
 
-## Installation
+This project has been restructured with a clean, modular architecture that separates concerns and improves maintainability:
 
-This project relies on **Python** for data processing and **REAPER** for interacting with VST presets and rendering audio.
+```
+preset-qualifier-project/
+├── src/                    # Source code (Python package)
+│   ├── config/            # Configuration management
+│   ├── data_processing/   # Data cleaning and preparation
+│   ├── audio_analysis/    # Audio feature extraction
+│   ├── qualification/     # Preset scoring and sorting
+│   └── utils/             # Shared utilities (logging, etc.)
+├── data/                  # Input data and generated files
+├── output/                # Final qualified presets (organized by score)
+├── config/                # Configuration files (YAML)
+├── scripts/               # Executable scripts
+├── docs/                  # Documentation
+├── tests/                 # Unit tests
+├── requirements.txt       # Python dependencies
+└── README.md             # This file
+```
 
-1.  **Install Python:**
-    * It's highly recommended to use a Python version manager like `pyenv` to install a compatible version (e.g., **Python 3.11** or **3.12**, as newer versions may have compatibility issues with audio libraries).
-    * **On macOS:** Use Homebrew: `brew install pyenv`, then `pyenv install 3.12.4` (or similar).
-2.  **Install REAPER:**
-    * Download and install REAPER from [reaper.fm](https://www.reaper.fm).
-    * **On macOS (Apple Silicon):** Ensure you download the **native ARM64 version**.
-3.  **Configure REAPER for Python:**
-    * Open REAPER > Options > Preferences > Plug-ins > ReaScript.
-    * Enable Python.
-    * You must *manually paste* the full path to your Python installation's dynamic library (`.dylib` on macOS, `.dll` on Windows) into the "Custom path..." field. Browsing for the file usually doesn't work.
-        * **macOS Example Path:** `/Library/Frameworks/Python.framework/Versions/3.12/lib/libpython3.12.dylib`
-        * You may need to remove the macOS quarantine attribute from this file using the Terminal: `sudo xattr -d com.apple.quarantine /path/to/your/libpython....dylib`
-    * Restart REAPER after setting the path.
-4.  **Install Python Libraries:**
-    * Open your Terminal or Command Prompt.
-    * Navigate to this project's directory.
-    * If using `pyenv`, set the local version: `pyenv local 3.12.4`
-    * Install the required libraries:
-        ```bash
-        pip install librosa numpy
-        ```
+## 🚀 Quick Start
 
-***
+### Prerequisites
 
-## Usage
+- **Python 3.11+** (recommended 3.12)
+- **REAPER** (for audio rendering)
+- **VST Plugins** (Serum recommended)
 
-This project uses a semi-automated workflow involving Python scripts and manual steps within REAPER.
+### Installation
 
-**Workflow Overview:**
+1. **Clone or download** this project
+2. **Install Python dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Configure REAPER** for Python integration (see detailed setup below)
 
-1.  **Clean & Prepare Data:** Run a Python script to standardize preset filenames and generate initial metadata.
-2.  **Setup REAPER Project:** Run a ReaScript inside REAPER to create tracks, load the VST, and add MIDI notes based on the metadata.
-3.  **Manual Preset Loading:** Manually step through the REAPER tracks and load the corresponding presets into the VST.
-4.  **Render Audio:** Use REAPER's batch rendering (stems) to generate audio previews.
-5.  **Analyze Audio:** Run a Python script to analyze the rendered audio previews and generate detailed scores and suggested categories.
-6.  **Sort & Rename Files:** Run a final Python script to copy the cleaned presets and audio previews into folders based on their score, renaming them based on specified attributes.
+### Usage
 
-**Step-by-Step:**
+The workflow consists of three main steps:
 
-1.  **Place Presets:** Put your raw, unsorted VST presets (e.g., `.fxp`, `.serumpreset`) into the `source_folder`.
-2.  **Run Cleaning Script:**
-    * Open your Terminal.
-    * Navigate to the project directory.
-    * Run: `python3 file_and_metadata_cleaning.py`
-    * This creates the `clean_preset_folder` (with renamed, ASCII-safe preset files) and the initial `metadata.csv`.
-3.  **Run REAPER Setup Script:**
-    * Open REAPER.
-    * Go to Actions > Show action list... > ReaScript: Load...
-    * Select and run the `project_setup.py` script.
-    * This builds the REAPER project: creates tracks (alphabetically sorted), names them, loads Serum (specified by `VST_NAME` in the script), and adds the correct 4-bar MIDI note (C1 for BASS, C3 otherwise).
-4.  **Manually Load Presets in REAPER:**
-    * Go to Track 1, open Serum, load the first preset corresponding to the track name.
-    * Go to Track 2, open Serum, click the "next preset" arrow/button.
-    * Repeat for all tracks.
-5.  **Render Stems in REAPER:**
-    * Select all the preset tracks (Track 1 to the last preset track).
-    * Go to File > Render...
-    * Set **Source** to **"Selected tracks (stems)"**.
-    * Set **Directory** to the `preview_folder`.
-    * Ensure **"Mute master"** and **"Create subdirectory for render"** are **UNCHECKED**.
-    * Click **"Render X files"**.
-6.  **Run Analysis Script:**
-    * Open your Terminal.
-    * Navigate to the project directory.
-    * Run: `python3 analyze_previews.py`
-    * This reads the `.wav` files in `preview_folder`, analyzes them, and creates the `preset_analysis_results.csv` file with detailed scores.
-7.  **Run Sorting & Renaming Script:**
-    * Edit the `sort_and_rename.py` script to ensure the `COLUMN_INDICES` dictionary correctly maps to the attribute columns (O, P, Q, R, S, T, etc.) in your `final_analysis.csv`.
-    * Open your Terminal.
-    * Navigate to the project directory.
-    * Run: `python3 sort_and_rename.py`
-    * This reads `final_analysis.csv`, finds the score (Column N) and attributes (Columns O-T), then copies the corresponding `.wav` from `preview_folder` and `.fxp`/`.serumpreset` from `clean_preset_folder` into the appropriate subfolder (1-5) within `alignment_score_attrs_only_v2`, renaming the files using only the attributes (e.g., `BASS_Sub_Dark_Short_Punchy_Mono.wav`). **Warning:** Files with identical scores and attributes will overwrite each other.
+1. **Clean & Prepare Data:**
+   ```bash
+   python scripts/clean_presets.py
+   ```
 
-***
+2. **Setup REAPER Project & Render Audio:**
+   - Open REAPER
+   - Run the project setup script (manual step)
+   - Render audio stems
 
-## Contributing
+3. **Analyze & Qualify:**
+   ```bash
+   python scripts/analyze_audio.py
+   python scripts/sort_presets.py
+   ```
 
-Contributions are welcome! Whether you're fixing bugs, improving documentation, suggesting new features, or submitting code, your help is appreciated.
+## 📋 Detailed Workflow
 
-Here are a few ways you can contribute:
+### Step 1: Data Preparation
 
-Reporting Issues: If you find a bug or have a suggestion, please open an issue on the GitHub repository. Provide as much detail as possible, including steps to reproduce the bug or a clear description of the feature request.
+Place your raw VST presets (`.fxp`, `.serumpreset`) in `data/source_presets/`, then run:
 
-Submitting Code Changes:
+```bash
+python scripts/clean_presets.py
+```
 
-Fork the repository to your own GitHub account.
+This creates:
+- `data/clean_presets/` - Sanitized preset files
+- `data/metadata.csv` - Preset metadata with categories
 
-Create a new branch for your changes (e.g., git checkout -b feature/add-new-analysis or bugfix/fix-midi-note).
+### Step 2: Audio Rendering (REAPER)
 
-Make your changes and commit them with clear messages.
+1. **Setup REAPER Project:**
+   - Open REAPER
+   - Go to `Actions > Show action list... > ReaScript: Load...`
+   - Select and run `src/data_processing/project_setup.py`
+   - This creates tracks, loads Serum, and adds MIDI notes
 
-Push your branch to your fork (git push origin feature/your-feature).
+2. **Manual Preset Loading:**
+   - Track 1: Load first preset
+   - Track 2+: Click "next preset" arrow
+   - Repeat for all tracks
 
-Open a Pull Request (PR) from your branch to the main repository's main branch.
+3. **Render Audio:**
+   - Select all tracks
+   - `File > Render...`
+   - Source: "Selected tracks (stems)"
+   - Directory: `data/previews/`
+   - Uncheck "Mute master" and "Create subdirectory"
 
-Clearly describe the changes you've made in the PR description.
+### Step 3: Analysis & Qualification
 
-Improving Documentation: If you find parts of the README or code comments unclear, feel free to suggest improvements by opening an issue or submitting a PR.
+```bash
+# Analyze rendered audio
+python scripts/analyze_audio.py
 
-When submitting code, please try to follow the existing code style and ensure your changes work as expected. Thank you for helping improve this project!
+# Sort and rename presets by quality score
+python scripts/sort_presets.py
+```
 
-***
+Results are organized in `output/` with subfolders 1-5 (best to worst).
 
-## License
+## ⚙️ Configuration
 
-This project is licensed under the MIT License.
-Copyright (c) 2025 znzl.live.
+All settings are managed through `config/default.yaml`:
 
-See the [LICENSE](LICENSE) file for full details.
+- **Paths:** Data directories, output locations
+- **VST:** Plugin names and supported formats
+- **Audio:** Sample rates, note assignments
+- **Categories:** Preset type detection rules
+
+## 🏛️ Architecture Overview
+
+### Core Modules
+
+- **`config/`** - Centralized configuration management
+- **`data_processing/`** - Preset cleaning and categorization
+- **`audio_analysis/`** - Feature extraction and diagnosis
+- **`qualification/`** - Scoring and organization
+- **`utils/`** - Logging and shared utilities
+
+### Key Features
+
+- **Modular Design:** Each component has a single responsibility
+- **Configuration-Driven:** No hardcoded paths or settings
+- **Error Handling:** Comprehensive logging and error recovery
+- **Extensible:** Easy to add new analysis features or categories
+
+## 🔧 Advanced Configuration
+
+### Custom Categories
+
+Edit `config/default.yaml` to add new preset categories:
+
+```yaml
+categories:
+  MY_TYPE:
+    keywords: ["my", "custom"]
+    note: 60
+    subcategory: "Custom"
+    preview_length_ms: 5000
+```
+
+### Audio Features
+
+The system extracts 10+ audio features:
+- Tonalness & pitch detection
+- Attack time analysis
+- Spectral characteristics
+- Dynamic range assessment
+- Rhythmic density
+
+## 🧪 Testing
+
+Run tests with:
+```bash
+python -m pytest tests/
+```
+
+## 📚 API Reference
+
+### Core Classes
+
+- `PresetCleaner` - Handles preset file processing
+- `AudioAnalyzer` - Extracts audio features
+- `PresetSorter` - Organizes results by quality
+
+### Utility Functions
+
+- `setup_logging()` - Configures application logging
+- `get_logger()` - Gets contextual logger instances
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Ensure all tests pass
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Built with librosa for audio analysis
+- REAPER for audio rendering capabilities
+- Inspired by audio production workflows

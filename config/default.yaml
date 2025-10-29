@@ -1,0 +1,60 @@
+# Preset Qualifier Project Configuration
+
+# Project paths (relative to project root)
+paths:
+  data_dir: "data"
+  output_dir: "output"
+  source_folder: "data/source_presets"
+  clean_preset_folder: "data/clean_presets"
+  preview_folder: "output/previews"
+  metadata_file: "data/metadata.csv"
+  analysis_results: "output/analysis_results.csv"
+
+# VST Configuration
+vst:
+  name: "VST3i: Serum 2 (Xfer Records)"
+  supported_extensions: [".fxp", ".serumpreset"]
+
+# Audio Analysis Settings
+audio:
+  sample_rate: 44100
+  preview_length_ms: 5000
+  bass_note: 36  # C1
+  other_note: 60  # C3
+
+# Categorization Rules
+categories:
+  BASS:
+    keywords: ["bass", "bs"]
+    note: 36
+    subcategory: "Sub"
+  LEAD:
+    keywords: ["lead", "ld"]
+    note: 60
+    subcategory: "Mono"
+  PLUCK:
+    keywords: ["pluck", "plk"]
+    note: 60
+    subcategory: "Short"
+  PAD:
+    keywords: ["pad"]
+    note: 60
+    preview_length_ms: 10000
+    subcategory: "Evolving"
+  SEQ:
+    keywords: ["seq", "arp"]
+    note: 60
+    preview_length_ms: 8000
+    subcategory: "Rhythmic"
+  SYNTH:
+    keywords: ["synth", "syn"]
+    note: 60
+    subcategory: "Poly"
+  FX:
+    keywords: ["fx"]
+    note: 60
+    subcategory: "Misc"
+
+# Default category for unmatched presets
+default_category: "UNKNOWN"
+default_subcategory: "UNTITLED"
