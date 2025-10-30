@@ -2,7 +2,7 @@
 
 A modular Python application for processing, analyzing, and qualifying VST presets using audio feature extraction and machine learning techniques.
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -85,7 +85,7 @@ python scripts/sort_presets.py
 
 Results are organized in `output/` with subfolders 1-5 (best to worst).
 
-## ⚙️ Configuration
+## Configuration
 
 All settings are managed through `config/default.yaml`:
 
@@ -94,7 +94,7 @@ All settings are managed through `config/default.yaml`:
 - **Audio:** Sample rates, note assignments
 - **Categories:** Preset type detection rules
 
-## 🏛️ Architecture Overview
+## Architecture Overview
 
 ### Core Modules
 
@@ -111,7 +111,7 @@ All settings are managed through `config/default.yaml`:
 - **Error Handling:** Comprehensive logging and error recovery
 - **Extensible:** Easy to add new analysis features or categories
 
-## 🔧 Advanced Configuration
+## Advanced Configuration
 
 ### Custom Categories
 
@@ -135,14 +135,14 @@ The system extracts 10+ audio features:
 - Dynamic range assessment
 - Rhythmic density
 
-## 🧪 Testing
+## Testing
 
 Run tests with:
 ```bash
 python -m pytest tests/
 ```
 
-## 📚 API Reference
+## API Reference
 
 ### Core Classes
 
@@ -155,7 +155,7 @@ python -m pytest tests/
 - `setup_logging()` - Configures application logging
 - `get_logger()` - Gets contextual logger instances
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -167,7 +167,7 @@ python -m pytest tests/
 
 MIT License - see LICENSE file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with librosa for audio analysis
 - REAPER for audio rendering capabilities
